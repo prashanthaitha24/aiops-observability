@@ -1,0 +1,58 @@
+name: Release Image (GHCR)
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/aiops-detector
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract tag
+        id: vars
+        run: echo "TAG=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+
+      - name: Build and push (multi-arch)
+        uses: docker/build-push-action@v6
+        with:
+          context: services/aiops-detector
+          push: true
+          tags: |
+            ghcr.io/prashanthaitha24/aiops-detector:${{ steps.vars.outputs.TAG }}
+            ghcr.io/prashanthaitha24/aiops-detector:latest
+          platforms: linux/amd64,linux/arm64
+
+  github_release:
+    runs-on: ubuntu-latest
+    needs: build_and_push
+    steps:
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+
