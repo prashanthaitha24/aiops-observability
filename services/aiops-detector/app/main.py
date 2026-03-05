@@ -26,6 +26,19 @@ class ScoreResponse(BaseModel):
     rca_summary: str
 
 
+@app.get("/")
+def root():
+    return {
+        "service": "aiops-detector",
+        "status": "ok",
+        "endpoints": {
+            "health": "/health",
+            "docs": "/docs",
+            "metrics": "/metrics",
+            "score": "/score",
+        },
+    }
+
 @app.get("/health")
 def health():
     REQ_COUNT.labels(endpoint="/health").inc()
