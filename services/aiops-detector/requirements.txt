@@ -1,8 +1,8 @@
 fastapi
-uvicorn[standard]
+uvicorn
 pydantic
 numpy
 pandas
 prometheus-client
 torch
-
+scikit-learn

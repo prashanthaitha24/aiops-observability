@@ -5,12 +5,13 @@ from fastapi import FastAPI
 from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
 from pydantic import BaseModel, Field
 from starlette.responses import Response
+from .model import AnomalyDetector
 
 app = FastAPI(title="AIOps Detector", version="0.1.0")
 
 REQ_COUNT = Counter("aiops_requests_total", "Total requests", ["endpoint"])
 REQ_LAT = Histogram("aiops_request_latency_seconds", "Request latency", ["endpoint"])
-
+detector = AnomalyDetector()
 
 class ScoreRequest(BaseModel):
     # Window of metric values (single series for MVP). Later we'll accept multivariate.
@@ -59,13 +60,14 @@ def score(req: ScoreRequest):
     arr = np.array(req.values, dtype=float)
 
     # MVP anomaly score: robust z-score-ish using median and MAD (no training yet)
-    med = np.median(arr)
-    mad = np.median(np.abs(arr - med)) + 1e-9
-    z = np.abs(arr[-1] - med) / (1.4826 * mad)
-    anomaly_score = float(z)
+    #med = np.median(arr)
+    #mad = np.median(np.abs(arr - med)) + 1e-9
+    #z = np.abs(arr[-1] - med) / (1.4826 * mad)
+    #anomaly_score = float(z)
 
-    anomaly = anomaly_score >= 3.5  # common robust threshold; we'll replace with DL model later
-
+    #anomaly = anomaly_score >= 3.5  # common robust threshold; we'll replace with DL model later
+    # Isolation Forest anomaly detection
+    anomaly_score, anomaly = detector.score(arr)
     # MVP RCA: placeholder — later we’ll rank using service graph + multi-metric lead/lag
     top_k = [req.service] if anomaly else []
 
