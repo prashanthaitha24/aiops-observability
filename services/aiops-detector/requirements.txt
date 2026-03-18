@@ -6,3 +6,4 @@ pandas
 prometheus-client
 torch
 scikit-learn
+requests
