@@ -1,9 +1,9 @@
 fastapi
 uvicorn
 pydantic
-numpy
+numpy>=1.26.0
 pandas
-prometheus-client
+prometheus-client>=0.21.0
 torch
 scikit-learn
-requests
+requests>=2.32.0
