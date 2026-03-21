@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: aiops-detector
+  namespace: aiops
+  labels:
+    app: aiops-detector
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8001"
+    prometheus.io/path: "/metrics"
+spec:
+  selector:
+    app: aiops-detector
+  ports:
+    - name: metrics
+      port: 8001
+      targetPort: 8001
+  type: ClusterIP
