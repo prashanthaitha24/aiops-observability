@@ -43,8 +43,8 @@ class PrometheusAPIClient:
 
     def fetch_feature_metrics(self) -> dict[str, float]:
         queries = {
-            "frontend_rps": 'sum(rate(app_frontend_requests_total[5m]))',
-            "ads_rps": 'sum(rate(app_ads_ad_requests_total[5m]))',
+            "frontend_rps": "sum(rate(app_frontend_requests_total[5m]))",
+            "ads_rps": "sum(rate(app_ads_ad_requests_total[5m]))",
             "cart_add_latency_ms": """
                 1000 * (
                   sum(rate(app_cart_add_item_latency_seconds_sum[5m]))

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from model_baselines import BASELINES, WEIGHTS
+from .model_baselines import BASELINES, WEIGHTS
 
 
 class AnomalyModel:

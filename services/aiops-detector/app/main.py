@@ -3,8 +3,8 @@ from __future__ import annotations
 import logging
 import time
 
-from anomaly_model import AnomalyModel
-from config import (
+from .anomaly_model import AnomalyModel
+from .config import (
     ANOMALY_THRESHOLD,
     EXPORTER_BIND_HOST,
     EXPORTER_ENABLED,
@@ -13,10 +13,10 @@ from config import (
     POLL_INTERVAL_SECONDS,
     PROMETHEUS_BASE_URL,
 )
-from feature_builder import build_feature_dict, build_feature_vector
-from metrics_exporter import start_metrics_server, update_metrics
-from prometheus_api_client import PrometheusAPIClient
-from result_publisher import publish_result
+from .feature_builder import build_feature_dict, build_feature_vector
+from .metrics_exporter import start_metrics_server, update_metrics
+from .prometheus_api_client import PrometheusAPIClient
+from .result_publisher import publish_result
 
 
 logger = logging.getLogger("aiops-detector")
