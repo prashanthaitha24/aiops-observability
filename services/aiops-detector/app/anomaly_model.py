@@ -39,7 +39,8 @@ class AnomalyModel:
 
             if component_score >= 0.30:
                 reasons.append(
-                    f"{feature_name} elevated (value={value:.2f}, baseline={baseline:.2f})"
+                    f"{feature_name} elevated "
+                    f"(value={value:.2f}, baseline={baseline:.2f})"
                 )
 
         final_score = max(0.0, min(weighted_score, 1.0))

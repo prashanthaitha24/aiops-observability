@@ -18,7 +18,6 @@ from .metrics_exporter import start_metrics_server, update_metrics
 from .prometheus_api_client import PrometheusAPIClient
 from .result_publisher import publish_result
 
-
 logger = logging.getLogger("aiops-detector")
 
 
