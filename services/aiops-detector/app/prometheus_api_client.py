@@ -76,7 +76,8 @@ class PrometheusAPIClient:
         metrics: dict[str, float] = {}
         for metric_name, query in queries.items():
             metrics[metric_name] = self.query_scalar(
-                " ".join(query.split()), default=0.0
+                " ".join(query.split()),
+                default=0.0,
             )
 
         return metrics
