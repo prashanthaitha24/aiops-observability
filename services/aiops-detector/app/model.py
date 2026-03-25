@@ -1,13 +1,11 @@
 import numpy as np
 from sklearn.ensemble import IsolationForest
 
+
 class AnomalyDetector:
     def __init__(self):
         # contamination = expected anomaly ratio
-        self.model = IsolationForest(
-            contamination=0.1,
-            random_state=42
-        )
+        self.model = IsolationForest(contamination=0.1, random_state=42)
 
     def score(self, values):
         values = np.array(values).reshape(-1, 1)

@@ -1,6 +1,5 @@
 import os
 
-
 PROMETHEUS_BASE_URL = os.getenv("PROMETHEUS_BASE_URL", "http://127.0.0.1:9090")
 POLL_INTERVAL_SECONDS = int(os.getenv("POLL_INTERVAL_SECONDS", "30"))
 ANOMALY_THRESHOLD = float(os.getenv("ANOMALY_THRESHOLD", "0.70"))

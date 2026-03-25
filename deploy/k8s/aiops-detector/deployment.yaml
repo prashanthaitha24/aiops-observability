@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aiops-detector
+  namespace: aiops
+  labels:
+    app: aiops-detector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aiops-detector
+  template:
+    metadata:
+      labels:
+        app: aiops-detector
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8001"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: aiops-detector
+          image: aiops-detector:0.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8001
+              name: metrics
+          envFrom:
+            - configMapRef:
+                name: aiops-detector-config
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 8001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 8001
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: false
