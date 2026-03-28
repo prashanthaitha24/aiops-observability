@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from prometheus_client import Gauge, start_http_server
 
-
 ANOMALY_SCORE = Gauge(
     "aiops_anomaly_score",
     "Current anomaly score calculated by the AIOps detector",

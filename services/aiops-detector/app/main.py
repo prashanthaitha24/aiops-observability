@@ -4,7 +4,6 @@ import logging
 import time
 
 from .anomaly_model import AnomalyModel
-
 from .config import (
     ANOMALY_THRESHOLD,
     DL_MODEL_ENABLED,
@@ -24,10 +23,9 @@ from .config import (
     SCALER_FILE,
     THRESHOLD_FILE,
 )
-from .lstm_model import LSTMAnomalyModel
-
 from .dl_model import DeepLearningAnomalyModel
 from .feature_builder import build_feature_dict, build_feature_vector
+from .lstm_model import LSTMAnomalyModel
 from .metrics_exporter import (
     start_metrics_server,
     update_dl_metrics,
@@ -87,15 +85,14 @@ def run_once(
 
     publish_result(result, feature_dict)
 
+    #    update_metrics(feature_dict, result)
+    #    update_dl_metrics(result)
+    #    publish_result(result, feature_dict)
 
-#    update_metrics(feature_dict, result)
-#    update_dl_metrics(result)
-#    publish_result(result, feature_dict)
-
-#    if EXPORTER_ENABLED:
-#        update_metrics(feature_dict, result)
-#        if MODEL_MODE == "dl":
-#            update_dl_metrics(result)
+    #    if EXPORTER_ENABLED:
+    #        update_metrics(feature_dict, result)
+    #        if MODEL_MODE == "dl":
+    #            update_dl_metrics(result)
 
     return {
         "features": feature_dict,

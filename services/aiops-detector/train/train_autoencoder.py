@@ -24,7 +24,9 @@ def main() -> None:
 
     missing_columns = [name for name in FEATURE_ORDER if name not in data_frame.columns]
     if missing_columns:
-        raise ValueError(f"Missing required columns in training data: {missing_columns}")
+        raise ValueError(
+            f"Missing required columns in training data: {missing_columns}"
+        )
 
     features = data_frame[FEATURE_ORDER].astype("float32").to_numpy()
 

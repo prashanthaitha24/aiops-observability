@@ -31,13 +31,15 @@ class LSTMAnomalyModel:
         self.buffer.append(vector)
 
         if len(self.buffer) < self.sequence_length:
+            warmup_message = (
+                "warming up sequence buffer: "
+                f"{len(self.buffer)}/{self.sequence_length}"
+            )
             return {
                 "score": 0.0,
                 "detected": False,
                 "reconstruction_error": 0.0,
-                "reasons": [
-                    f"warming up sequence buffer: {len(self.buffer)}/{self.sequence_length}"
-                ],
+                "reasons": [warmup_message],
                 "model_type": "lstm_autoencoder",
             }
 
@@ -65,9 +67,11 @@ class LSTMAnomalyModel:
         latest_deltas = np.abs(latest_original - latest_reconstructed)
 
         top_indices = np.argsort(latest_deltas)[::-1][:3]
+
         reasons = [
             (
-                f"{FEATURE_ORDER[index]} contributed strongly to sequence reconstruction error "
+                f"{FEATURE_ORDER[index]} contributed strongly to "
+                f"sequence reconstruction error "
                 f"({latest_deltas[index]:.4f})"
             )
             for index in top_indices
