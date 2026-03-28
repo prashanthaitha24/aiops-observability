@@ -79,4 +79,3 @@ def update_dl_metrics(result: dict[str, object]) -> None:
     DL_ANOMALY_SCORE.set(float(result.get("score", 0.0)))
     DL_ANOMALY_DETECTED.set(1.0 if bool(result.get("detected", False)) else 0.0)
     DL_RECONSTRUCTION_ERROR.set(float(result.get("reconstruction_error", 0.0)))
-    print("UPDATED DL METRICS:", result)

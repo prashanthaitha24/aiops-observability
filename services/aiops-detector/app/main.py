@@ -4,13 +4,19 @@ import logging
 import time
 
 from .anomaly_model import AnomalyModel
+
 from .config import (
     ANOMALY_THRESHOLD,
     DL_MODEL_ENABLED,
+    DL_MODEL_TYPE,
     EXPORTER_BIND_HOST,
     EXPORTER_ENABLED,
     EXPORTER_PORT,
     LOG_LEVEL,
+    LSTM_METADATA_FILE,
+    LSTM_MODEL_FILE,
+    LSTM_SCALER_FILE,
+    LSTM_THRESHOLD_FILE,
     MODEL_FILE,
     MODEL_MODE,
     POLL_INTERVAL_SECONDS,
@@ -18,6 +24,8 @@ from .config import (
     SCALER_FILE,
     THRESHOLD_FILE,
 )
+from .lstm_model import LSTMAnomalyModel
+
 from .dl_model import DeepLearningAnomalyModel
 from .feature_builder import build_feature_dict, build_feature_vector
 from .metrics_exporter import (
@@ -41,6 +49,16 @@ def configure_logging() -> None:
 
 def build_model() -> object:
     if DL_MODEL_ENABLED:
+        if DL_MODEL_TYPE == "lstm_autoencoder":
+            registry = ModelRegistry(
+                model_file=LSTM_MODEL_FILE,
+                scaler_file=LSTM_SCALER_FILE,
+                threshold_file=LSTM_THRESHOLD_FILE,
+                metadata_file=LSTM_METADATA_FILE,
+            )
+            logger.info("loading LSTM autoencoder anomaly model")
+            return LSTMAnomalyModel(registry)
+
         registry = ModelRegistry(
             model_file=MODEL_FILE,
             scaler_file=SCALER_FILE,
@@ -62,14 +80,22 @@ def run_once(
     _feature_vector = build_feature_vector(feature_dict)
 
     result = model.score(feature_dict)  # type: ignore[attr-defined]
-    update_metrics(feature_dict, result)
-    update_dl_metrics(result)
-    publish_result(result, feature_dict)
-
     if EXPORTER_ENABLED:
         update_metrics(feature_dict, result)
         if MODEL_MODE == "dl":
             update_dl_metrics(result)
+
+    publish_result(result, feature_dict)
+
+
+#    update_metrics(feature_dict, result)
+#    update_dl_metrics(result)
+#    publish_result(result, feature_dict)
+
+#    if EXPORTER_ENABLED:
+#        update_metrics(feature_dict, result)
+#        if MODEL_MODE == "dl":
+#            update_dl_metrics(result)
 
     return {
         "features": feature_dict,

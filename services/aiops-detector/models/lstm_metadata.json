@@ -1,0 +1,12 @@
+{
+  "model_type": "lstm_autoencoder",
+  "sequence_length": 10,
+  "feature_order": [
+    "frontend_rps",
+    "ads_rps",
+    "cart_add_latency_ms",
+    "cart_get_latency_ms",
+    "cart_add_p95_latency_ms",
+    "cart_get_p95_latency_ms"
+  ]
+}
