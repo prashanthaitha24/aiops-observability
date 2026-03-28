@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from prometheus_client import Gauge, start_http_server
 
-
 ANOMALY_SCORE = Gauge(
     "aiops_anomaly_score",
     "Current anomaly score calculated by the AIOps detector",
@@ -79,4 +78,3 @@ def update_dl_metrics(result: dict[str, object]) -> None:
     DL_ANOMALY_SCORE.set(float(result.get("score", 0.0)))
     DL_ANOMALY_DETECTED.set(1.0 if bool(result.get("detected", False)) else 0.0)
     DL_RECONSTRUCTION_ERROR.set(float(result.get("reconstruction_error", 0.0)))
-    print("UPDATED DL METRICS:", result)

@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 MODELS_DIR = BASE_DIR / "models"
 DATA_DIR = BASE_DIR / "data"
@@ -37,3 +36,23 @@ TRAINING_COLLECTION_SAMPLES = int(os.getenv("TRAINING_COLLECTION_SAMPLES", "120"
 # Creates directories if they do not exist.
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
 DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+
+#MODELS_DIR = Path(os.getenv("MODELS_DIR", "models"))
+
+DL_MODEL_TYPE = os.getenv("DL_MODEL_TYPE", "mlp_autoencoder")
+
+LSTM_SEQUENCE_LENGTH = int(os.getenv("LSTM_SEQUENCE_LENGTH", "10"))
+
+LSTM_MODEL_FILE = Path(
+    os.getenv("LSTM_MODEL_FILE", str(MODELS_DIR / "lstm_autoencoder.pkl"))
+)
+LSTM_SCALER_FILE = Path(
+    os.getenv("LSTM_SCALER_FILE", str(MODELS_DIR / "lstm_scaler.pkl"))
+)
+LSTM_THRESHOLD_FILE = Path(
+    os.getenv("LSTM_THRESHOLD_FILE", str(MODELS_DIR / "lstm_threshold.json"))
+)
+LSTM_METADATA_FILE = Path(
+    os.getenv("LSTM_METADATA_FILE", str(MODELS_DIR / "lstm_metadata.json"))
+)

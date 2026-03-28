@@ -4,7 +4,6 @@ import logging
 import time
 
 from app.config import (
-    POLL_INTERVAL_SECONDS,
     PROMETHEUS_BASE_URL,
     TRAINING_COLLECTION_INTERVAL_SECONDS,
     TRAINING_COLLECTION_SAMPLES,
@@ -13,7 +12,6 @@ from app.config import (
 from app.feature_builder import FEATURE_ORDER, build_feature_dict
 from app.prometheus_api_client import PrometheusAPIClient
 from app.training_data import TrainingDataWriter
-
 
 logging.basicConfig(
     level=logging.INFO,
