@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from collections import deque
 from typing import Any
 
@@ -30,6 +31,7 @@ class LSTMAnomalyModel:
         vector = build_feature_vector(features)
         self.buffer.append(vector)
 
+        # ✅ Warm-up phase
         if len(self.buffer) < self.sequence_length:
             warmup_message = (
                 "warming up sequence buffer: "
@@ -43,28 +45,52 @@ class LSTMAnomalyModel:
                 "model_type": "lstm_autoencoder",
             }
 
-        sequence = np.array([list(self.buffer)], dtype=np.float32)  # (1, seq, feat)
+        # ✅ Build sequence
+        sequence = np.array([list(self.buffer)], dtype=np.float32)
         original_shape = sequence.shape
 
+        # ✅ Scale sequence
         flat_sequence = sequence.reshape(-1, sequence.shape[-1])
         scaled_flat = self.scaler.transform(flat_sequence)
         scaled_sequence = scaled_flat.reshape(original_shape)
 
+        # ✅ Model inference
         reconstructed = self.model.predict(scaled_sequence, verbose=0)
+
         if reconstructed.ndim != 3:
             raise ValueError(
                 f"Unexpected reconstructed output shape: {reconstructed.shape}"
             )
 
+        # ✅ Reconstruction error
         reconstruction_error = float(
             np.mean(np.square(scaled_sequence - reconstructed))
         )
 
+        # 🔥 CRITICAL FIX: handle NaN / inf safely
+        if not math.isfinite(reconstruction_error):
+            return {
+                "score": 0.0,
+                "detected": False,
+                "reconstruction_error": 0.0,
+                "reasons": [
+                    "non-finite reconstruction error detected; fallback applied"
+                ],
+                "model_type": "lstm_autoencoder",
+            }
+
         detected = reconstruction_error >= self.threshold
 
+        # ✅ Feature-level explainability
         latest_original = scaled_sequence[0, -1, :]
         latest_reconstructed = reconstructed[0, -1, :]
+
         latest_deltas = np.abs(latest_original - latest_reconstructed)
+
+        # 🔥 Fix NaN in feature deltas
+        latest_deltas = np.nan_to_num(
+            latest_deltas, nan=0.0, posinf=0.0, neginf=0.0
+        )
 
         top_indices = np.argsort(latest_deltas)[::-1][:3]
 
@@ -77,10 +103,13 @@ class LSTMAnomalyModel:
             for index in top_indices
         ]
 
-        normalized_score = min(
-            1.0,
-            reconstruction_error / self.threshold if self.threshold > 0 else 0.0,
-        )
+        # ✅ Improved scoring (smooth instead of hard saturation)
+        if self.threshold > 0:
+            normalized_score = reconstruction_error / (
+                reconstruction_error + self.threshold
+            )
+        else:
+            normalized_score = 0.0
 
         return {
             "score": round(normalized_score, 4),

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from collections.abc import Iterable
 
 FEATURE_ORDER = [
@@ -16,13 +17,18 @@ def _safe_float(value: object, default: float = 0.0) -> float:
     try:
         if value is None:
             return default
+
         number = float(value)
+
+        if not math.isfinite(number):
+            return default
+
         if number < 0:
-            return 0.0
+            return default
+
         return number
     except (TypeError, ValueError):
         return default
-
 
 def build_feature_dict(raw_metrics: dict[str, float]) -> dict[str, float]:
     features: dict[str, float] = {}
